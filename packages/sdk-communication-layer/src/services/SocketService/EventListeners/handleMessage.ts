@@ -117,7 +117,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
 
       if (canDecrypt) {
         console.warn(`Invalid key exchange status detected --- updating it.`);
-        instance.state.keyExchange?.setKeysExchanged(true);
+        instance.state.keyExchange?.setKeysExchanged?.(true);
       } else {
         // received encrypted message before keys were exchanged.
         if (instance.state.isOriginator) {
@@ -150,7 +150,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
 
     const decryptedMessage =
       instance.state.keyExchange?.decryptMessage(message);
-    const messageReceived = JSON.parse(decryptedMessage ?? '');
+    const messageReceived = JSON.parse(decryptedMessage ?? 'null');
 
     if (messageReceived?.type === MessageType.PAUSE) {
       /**
@@ -163,7 +163,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
       instance.state.clientsPaused = false;
     }
 
-    if (instance.state.isOriginator && messageReceived.data) {
+    if (instance.state.isOriginator && messageReceived?.data) {
       // inform cache from result
       const rpcMessage = messageReceived.data as {
         id: string;
